@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Light</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+</head>
+<body class="bg-gray-50 font-sans flex items-center min-h-screen relative flex-col">
+
+    <div class="flex flex-col md:flex-row items-end gap-4 container mx-auto mt-4 max-w-[500px] w-full mr-2.5">
+        <!-- Category Filter Dropdown -->
+        <div class="flex-1">
+            <label for="categoryFilter" class="block text-gray-700 font-medium mb-1 text-[13px]">Filter by Category</label>
+    
+            <select id="categoryFilter" class="block w-[200px] text-gray-700 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">All Categories</option>
+                <option value="indoor">Indoor</option>
+                <option value="outdoor">Outdoor</option>
+                <option value="decorative">Decorative</option>
+                <option value="landscaping">Landscaping</option>
+            </select>
+        </div>
+    
+        <!-- Button to trigger modal positioned at top right -->
+        <button id="openModalBtn" class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            Add New Light
+        </button>
+    </div>
+    
+<!-- Table to display the uploaded lights -->
+<div class="container mx-auto p-2 mt-1 max-w-[1440px] w-full">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Uploaded Lights</h2>
+    <div class="overflow-x-auto">
+        <table class="w-full border-collapse bg-white shadow-md rounded-lg overflow-hidden">
+            <thead>
+                <tr class="bg-gray-200 text-gray-700">
+                    <th class="py-2 px-4 border-b text-sm sm:text-base">Light Name</th>
+                    <th class="py-2 px-4 border-b text-sm sm:text-base">Type</th>
+                    <th class="py-2 px-4 border-b text-sm sm:text-base">Description</th>
+                    <th class="py-2 px-4 border-b text-sm sm:text-base">Color</th>
+                    <th class="py-2 px-4 border-b text-sm sm:text-base">Category</th>
+                    <th class="py-2 px-4 border-b text-sm sm:text-base">Image</th>
+                    <th class="py-2 px-4 border-b text-sm sm:text-base">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="lightTableBody">
+                <!-- Lights data will be populated here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<!-- Modal (Popup) -->
+<div id="addLightModal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
+    <div class="w-[400px] h-[450px] p-4 bg-white rounded-lg shadow-md relative">
+        <!-- Close Button -->
+        <button id="closeModalBtn" class="absolute top-2 right-2 text-gray-700 hover:text-gray-900 focus:outline-none">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+
+        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Add New Light</h2>
+        
+        <!-- Scrollable content wrapper -->
+        <div class="h-[350px] overflow-y-auto">
+            <form id="lightForm">
+                <!-- Image Upload -->
+                <div class="mb-3">
+                    <label for="image" class="block text-gray-700 font-medium mb-1">Upload Image</label>
+                    <input type="file" id="image" name="image" accept="image/*" class="block w-full text-gray-700 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+
+                <!-- Light Name -->
+                <div class="mb-3">
+                    <label for="name" class="block text-gray-700 font-medium mb-1">Light Name</label>
+                    <input type="text" id="name" name="name" placeholder="Enter light name" class="block w-full text-gray-700 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+
+                <!-- Light Type -->
+                <div class="mb-3">
+                    <label for="type" class="block text-gray-700 font-medium mb-1">Light Type</label>
+                    <select id="type" name="type" class="block w-full text-gray-700 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="DOWNLIGHT">DOWNLIGHT</option>
+                        <option value="COB">COB</option>
+                        <option value="SURFACE COB">SURFACE COB</option>
+                        <option value="halogen">Halogen</option>
+                    </select>
+                </div>
+
+                <!-- Light Description -->
+                <div class="mb-3">
+                    <label for="description" class="block text-gray-700 font-medium mb-1">Light Description</label>
+                    <textarea id="description" name="description" rows="3" placeholder="Enter light description" class="block w-full text-gray-700 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                </div>
+
+                <!-- Color Input -->
+                <div class="mb-3">
+                    <label for="color" class="block text-gray-700 font-medium mb-1">Color</label>
+                    <input type="text" id="color" name="color" placeholder="Enter color code or name (e.g., #ff5733)" class="block w-full text-gray-700 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+
+                <!-- Light Category -->
+                <div class="mb-3">
+                    <label for="category" class="block text-gray-700 font-medium mb-1">Light Category</label>
+                    <select id="category" name="category" class="block w-full text-gray-700 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="indoor">Indoor</option>
+                        <option value="outdoor">Outdoor</option>
+                        <option value="decorative">Decorative</option>
+                        <option value="landscaping">Landscaping</option>
+                    </select>
+                </div>
+
+                <!-- Save Button -->
+                <div class="mt-4">
+                    <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Get modal and buttons
+    const modal = document.getElementById('addLightModal');
+    const openModalBtn = document.getElementById('openModalBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const lightTableBody = document.getElementById('lightTableBody');
+
+    // Open modal
+    openModalBtn.addEventListener('click', () => {
+        modal.classList.remove('hidden');
+    });
+
+    // Close modal
+    closeModalBtn.addEventListener('click', () => {
+        modal.classList.add('hidden');
+    });
+
+    // Optional: Close modal when clicking outside of the modal content
+    window.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.add('hidden');
+        }
+    });
+
+    // Firebase config
+    const firebaseConfig = {
+        apiKey: "AIzaSyAP5iPq_1dvbPQVkvmoVXcps6LhEX5rWQ4",
+        authDomain: "feedback-52db5.firebaseapp.com",
+        databaseURL: "https://feedback-52db5-default-rtdb.firebaseio.com",
+        projectId: "feedback-52db5",
+        storageBucket: "feedback-52db5.appspot.com",
+        messagingSenderId: "871103731307",
+        appId: "1:871103731307:web:866dc43df2e54acb95832e",
+        measurementId: "G-35Y8ZLQXZG"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+
+    // Handle form submission for adding/editing light
+    const form = document.getElementById('lightForm');
+    let editingLightId = null;
+
+    form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        // Get form data
+        const imageFile = document.getElementById('image').files[0];
+        const name = document.getElementById('name').value;
+        const type = document.getElementById('type').value;
+        const description = document.getElementById('description').value;
+        const color = document.getElementById('color').value;
+        const category = document.getElementById('category').value;
+
+        try {
+            let imageUrl = '';
+            if (imageFile) {
+                // Upload image to Firebase Storage
+                const storageRef = storage.ref().child('light_images/' + imageFile.name);
+                await storageRef.put(imageFile);
+                imageUrl = await storageRef.getDownloadURL();
+            }
+
+            if (editingLightId) {
+                // Update existing light in Firestore
+                await db.collection('lights').doc(editingLightId).update({
+                    name,
+                    type,
+                    description,
+                    color,
+                    category,
+                    image: imageUrl
+                });
+
+                alert('Light updated successfully!');
+            } else {
+                // Add new light to Firestore
+                await db.collection('lights').add({
+                    name,
+                    type,
+                    description,
+                    color,
+                    category,
+                    image: imageUrl
+                });
+
+                alert('New light added successfully!');
+            }
+
+            // Reset form and close modal
+            form.reset();
+            modal.classList.add('hidden');
+            loadLights();  // Reload lights data
+        } catch (error) {
+            console.error('Error saving light:', error);
+            alert('Failed to save light.');
+        }
+    });
+
+    // Load lights from Firestore and display them in the table
+    async function loadLights() {
+        try {
+            const lightsSnapshot = await db.collection('lights').get();
+            lightTableBody.innerHTML = '';  // Clear the table before populating
+
+            lightsSnapshot.forEach((doc) => {
+                const light = doc.data();
+                const row = document.createElement('tr');
+
+                row.innerHTML = `
+                    <td class="py-2 px-4 border-b">${light.name}</td>
+                    <td class="py-2 px-4 border-b">${light.type}</td>
+                    <td class="py-2 px-4 border-b">${light.description}</td>
+                    <td class="py-2 px-4 border-b">${light.color}</td>
+                    <td class="py-2 px-4 border-b">${light.category}</td>
+                    <td class="py-2 px-4 border-b"><img src="${light.image}" alt="${light.name}" class="w-16 h-16 object-cover"></td>
+                    <td class="py-2 px-4 border-b">
+                        <button class="bg-blue-500 text-white py-1 px-3 rounded-md hover:bg-blue-600 editBtn" data-id="${doc.id}">Edit</button>
+                        <button class="bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600 deleteBtn" data-id="${doc.id}">Delete</button>
+                    </td>
+                `;
+                
+                // Append the row to the table
+                lightTableBody.appendChild(row);
+            });
+
+            // Add event listeners for edit and delete buttons
+            const deleteButtons = document.querySelectorAll('.deleteBtn');
+            deleteButtons.forEach((button) => {
+                button.addEventListener('click', deleteLight);
+            });
+
+            const editButtons = document.querySelectorAll('.editBtn');
+            editButtons.forEach((button) => {
+                button.addEventListener('click', editLight);
+            });
+        } catch (error) {
+            console.error('Error loading lights:', error);
+        }
+    }
+
+    // Handle delete light
+    async function deleteLight(e) {
+        const lightId = e.target.dataset.id;
+        if (confirm('Are you sure you want to delete this light?')) {
+            try {
+                await db.collection('lights').doc(lightId).delete();
+                alert('Light deleted successfully!');
+                loadLights();  // Reload the lights data
+            } catch (error) {
+                console.error('Error deleting light:', error);
+                alert('Failed to delete light.');
+            }
+        }
+    }
+
+    // Edit light
+    async function editLight(e) {
+        const lightId = e.target.dataset.id;
+        editingLightId = lightId;
+
+        // Get the light data from Firestore
+        const lightDoc = await db.collection('lights').doc(lightId).get();
+        const lightData = lightDoc.data();
+
+        // Populate form fields with the existing light data
+        document.getElementById('name').value = lightData.name;
+        document.getElementById('type').value = lightData.type;
+        document.getElementById('description').value = lightData.description;
+        document.getElementById('color').value = lightData.color;
+        document.getElementById('category').value = lightData.category;
+
+        // Open modal for editing
+        modal.classList.remove('hidden');
+    }
+
+    // Initial load of lights when the page is loaded
+    loadLights();
+</script>
+
+<!-- Modify the script to handle category filter -->
+<script>
+    const categoryFilter = document.getElementById('categoryFilter');
+    
+    // Listen for category filter change
+    categoryFilter.addEventListener('change', function () {
+        loadLights();  // Reload the lights with the selected category filter
+    });
+
+    // Modify the loadLights function to filter based on category
+    async function loadLights() {
+        try {
+            const selectedCategory = categoryFilter.value;
+            let lightsSnapshot;
+
+            if (selectedCategory) {
+                // If a category is selected, filter by category
+                lightsSnapshot = await db.collection('lights')
+                    .where('category', '==', selectedCategory)
+                    .get();
+            } else {
+                // Otherwise, load all lights
+                lightsSnapshot = await db.collection('lights').get();
+            }
+
+            lightTableBody.innerHTML = '';  // Clear the table before populating
+
+            lightsSnapshot.forEach((doc) => {
+                const light = doc.data();
+                const row = document.createElement('tr');
+
+                row.innerHTML = `
+                    <td class="py-2 px-4 border-b">${light.name}</td>
+                    <td class="py-2 px-4 border-b">${light.type}</td>
+                    <td class="py-2 px-4 border-b">${light.description}</td>
+                    <td class="py-2 px-4 border-b">${light.color}</td>
+                    <td class="py-2 px-4 border-b">${light.category}</td>
+                    <td class="py-2 px-4 border-b"><img src="${light.image}" alt="${light.name}" class="w-16 h-16 object-cover"></td>
+                    <td class="py-2 px-4 border-b">
+                        <button class="bg-blue-500 text-white py-1 px-3 rounded-md hover:bg-blue-600 editBtn" data-id="${doc.id}">Edit</button>
+                        <button class="bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600 deleteBtn" data-id="${doc.id}">Delete</button>
+                    </td>
+                `;
+                
+                // Append the row to the table
+                lightTableBody.appendChild(row);
+            });
+
+            // Add event listeners for edit and delete buttons
+            const deleteButtons = document.querySelectorAll('.deleteBtn');
+            deleteButtons.forEach((button) => {
+                button.addEventListener('click', deleteLight);
+            });
+
+            const editButtons = document.querySelectorAll('.editBtn');
+            editButtons.forEach((button) => {
+                button.addEventListener('click', editLight);
+            });
+        } catch (error) {
+            console.error('Error loading lights:', error);
+        }
+    }
+
+    // Call the loadLights function initially to load all lights
+    loadLights();
+</script>
+
+
+</body>
+</html>
