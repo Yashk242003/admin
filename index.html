@@ -11,49 +11,32 @@
 </head>
 <body class="bg-gray-50 font-sans flex items-center min-h-screen relative flex-col">
 
-    <div class="flex flex-col md:flex-row items-end gap-4 container mx-auto mt-4 max-w-[500px] w-full mr-2.5">
-        <!-- Category Filter Dropdown -->
-        <div class="flex-1">
-            <label for="categoryFilter" class="block text-gray-700 font-medium mb-1 text-[13px]">Filter by Category</label>
-    
-            <select id="categoryFilter" class="block w-[200px] text-gray-700 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="">All Categories</option>
-                <option value="indoor">Indoor</option>
-                <option value="outdoor">Outdoor</option>
-                <option value="decorative">Decorative</option>
-                <option value="landscaping">Landscaping</option>
-            </select>
-        </div>
-    
-        <!-- Button to trigger modal positioned at top right -->
-        <button id="openModalBtn" class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            Add New Light
-        </button>
-    </div>
-    
-<!-- Table to display the uploaded lights -->
-<div class="container mx-auto p-2 mt-1 max-w-[1440px] w-full">
-    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Uploaded Lights</h2>
-    <div class="overflow-x-auto">
-        <table class="w-full border-collapse bg-white shadow-md rounded-lg overflow-hidden">
-            <thead>
-                <tr class="bg-gray-200 text-gray-700">
-                    <th class="py-2 px-4 border-b text-sm sm:text-base">Light Name</th>
-                    <th class="py-2 px-4 border-b text-sm sm:text-base">Type</th>
-                    <th class="py-2 px-4 border-b text-sm sm:text-base">Description</th>
-                    <th class="py-2 px-4 border-b text-sm sm:text-base">Color</th>
-                    <th class="py-2 px-4 border-b text-sm sm:text-base">Category</th>
-                    <th class="py-2 px-4 border-b text-sm sm:text-base">Image</th>
-                    <th class="py-2 px-4 border-b text-sm sm:text-base">Actions</th>
-                </tr>
-            </thead>
-            <tbody id="lightTableBody">
-                <!-- Lights data will be populated here -->
-            </tbody>
-        </table>
-    </div>
-</div>
+<!-- Button to trigger modal positioned at top right -->
+<button id="openModalBtn" class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 fixed top-4 right-4 z-50">
+    Add New Light
+</button>
 
+<!-- Table to display the uploaded lights -->
+<div class="container mx-auto p-4 mt-8 max-w-[1440px] w-full">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Uploaded Lights</h2>
+    <table class="w-full border-collapse bg-white shadow-md rounded-lg overflow-hidden">
+        <thead>
+            <tr class="bg-gray-200 text-gray-700">
+                <th class="py-2 px-4 border-b">Light Name</th>
+                <th class="py-2 px-4 border-b">Type</th>
+                <th class="py-2 px-4 border-b">Description</th>
+                <th class="py-2 px-4 border-b">Color</th>
+                <th class="py-2 px-4 border-b">Category</th>
+                <th class="py-2 px-4 border-b">Design</th>
+                <th class="py-2 px-4 border-b">Image</th>
+                <th class="py-2 px-4 border-b">Actions</th>
+            </tr>
+        </thead>
+        <tbody id="lightTableBody">
+            <!-- Lights data will be populated here -->
+        </tbody>
+    </table>
+</div>
 
 <!-- Modal (Popup) -->
 <div id="addLightModal" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50 hidden">
@@ -86,10 +69,13 @@
                 <div class="mb-3">
                     <label for="type" class="block text-gray-700 font-medium mb-1">Light Type</label>
                     <select id="type" name="type" class="block w-full text-gray-700 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="DOWNLIGHT">DOWNLIGHT</option>
                         <option value="COB">COB</option>
                         <option value="SURFACE COB">SURFACE COB</option>
-                        <option value="halogen">Halogen</option>
+                        <option value="DOWNLIGHT">DOWNLIGHT</option>
+                        <option value="BACKLIT">BACKLIT</option>
+                        <option value="ALUMINIUM DIE CAST">ALUMINIUM DIE CAST</option>
+                        <option value="SURFACE CYLINDER">SURFACE CYLINDER</option>
+                        <option value="ALUMINIUM PROFILE">ALUMINIUM PROFILE</option>
                     </select>
                 </div>
 
@@ -109,12 +95,24 @@
                 <div class="mb-3">
                     <label for="category" class="block text-gray-700 font-medium mb-1">Light Category</label>
                     <select id="category" name="category" class="block w-full text-gray-700 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="indoor">Indoor</option>
-                        <option value="outdoor">Outdoor</option>
-                        <option value="decorative">Decorative</option>
-                        <option value="landscaping">Landscaping</option>
+                        <option value="Indoor Light">Indoor Light</option>
+                        <option value="Outdoor Light">Outdoor Light</option>
+                        <option value="Decorative Light">Decorative Light</option>
+                        <option value="Landscaping Light">Landscaping Light</option>
                     </select>
                 </div>
+
+                 <!-- design -->
+                 <div class="mb-3">
+                    <label for="design class="block text-gray-700 font-medium mb-1">Light Design</label>
+                    <select id="design" name="design" class="block w-full text-gray-700 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="Mordern Design">Mordern Design</option>
+                        <option value="Vintage">Vintage</option>
+                        <option value="Royal">Royal</option>
+                        <option value="Classic">Classic</option>
+                    </select>
+                </div>
+
 
                 <!-- Save Button -->
                 <div class="mt-4">
@@ -182,6 +180,7 @@
         const description = document.getElementById('description').value;
         const color = document.getElementById('color').value;
         const category = document.getElementById('category').value;
+        const design = document.getElementById('design').value;
 
         try {
             let imageUrl = '';
@@ -200,6 +199,7 @@
                     description,
                     color,
                     category,
+                    design,
                     image: imageUrl
                 });
 
@@ -212,6 +212,7 @@
                     description,
                     color,
                     category,
+                    design,
                     image: imageUrl
                 });
 
@@ -244,6 +245,7 @@
                     <td class="py-2 px-4 border-b">${light.description}</td>
                     <td class="py-2 px-4 border-b">${light.color}</td>
                     <td class="py-2 px-4 border-b">${light.category}</td>
+                    <td class="py-2 px-4 border-b">${light.design}</td>
                     <td class="py-2 px-4 border-b"><img src="${light.image}" alt="${light.name}" class="w-16 h-16 object-cover"></td>
                     <td class="py-2 px-4 border-b">
                         <button class="bg-blue-500 text-white py-1 px-3 rounded-md hover:bg-blue-600 editBtn" data-id="${doc.id}">Edit</button>
@@ -300,6 +302,7 @@
         document.getElementById('description').value = lightData.description;
         document.getElementById('color').value = lightData.color;
         document.getElementById('category').value = lightData.category;
+        document.getElementById('design').value = lightData.design;
 
         // Open modal for editing
         modal.classList.remove('hidden');
@@ -308,74 +311,6 @@
     // Initial load of lights when the page is loaded
     loadLights();
 </script>
-
-<!-- Modify the script to handle category filter -->
-<script>
-    const categoryFilter = document.getElementById('categoryFilter');
-    
-    // Listen for category filter change
-    categoryFilter.addEventListener('change', function () {
-        loadLights();  // Reload the lights with the selected category filter
-    });
-
-    // Modify the loadLights function to filter based on category
-    async function loadLights() {
-        try {
-            const selectedCategory = categoryFilter.value;
-            let lightsSnapshot;
-
-            if (selectedCategory) {
-                // If a category is selected, filter by category
-                lightsSnapshot = await db.collection('lights')
-                    .where('category', '==', selectedCategory)
-                    .get();
-            } else {
-                // Otherwise, load all lights
-                lightsSnapshot = await db.collection('lights').get();
-            }
-
-            lightTableBody.innerHTML = '';  // Clear the table before populating
-
-            lightsSnapshot.forEach((doc) => {
-                const light = doc.data();
-                const row = document.createElement('tr');
-
-                row.innerHTML = `
-                    <td class="py-2 px-4 border-b">${light.name}</td>
-                    <td class="py-2 px-4 border-b">${light.type}</td>
-                    <td class="py-2 px-4 border-b">${light.description}</td>
-                    <td class="py-2 px-4 border-b">${light.color}</td>
-                    <td class="py-2 px-4 border-b">${light.category}</td>
-                    <td class="py-2 px-4 border-b"><img src="${light.image}" alt="${light.name}" class="w-16 h-16 object-cover"></td>
-                    <td class="py-2 px-4 border-b">
-                        <button class="bg-blue-500 text-white py-1 px-3 rounded-md hover:bg-blue-600 editBtn" data-id="${doc.id}">Edit</button>
-                        <button class="bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600 deleteBtn" data-id="${doc.id}">Delete</button>
-                    </td>
-                `;
-                
-                // Append the row to the table
-                lightTableBody.appendChild(row);
-            });
-
-            // Add event listeners for edit and delete buttons
-            const deleteButtons = document.querySelectorAll('.deleteBtn');
-            deleteButtons.forEach((button) => {
-                button.addEventListener('click', deleteLight);
-            });
-
-            const editButtons = document.querySelectorAll('.editBtn');
-            editButtons.forEach((button) => {
-                button.addEventListener('click', editLight);
-            });
-        } catch (error) {
-            console.error('Error loading lights:', error);
-        }
-    }
-
-    // Call the loadLights function initially to load all lights
-    loadLights();
-</script>
-
 
 </body>
 </html>
